@@ -1,18 +1,59 @@
 <script setup lang="ts">
-import {RouterLink, RouterView} from 'vue-router'
+import {ref} from "vue";
+
+interface Restaurant {
+  name?: string
+  address?: string
+  status?: string
+  dishes?: Dish[]
+}
+
+enum Status {
+  WanttoTry = 'Want to Try',
+  Recommended = 'Recommended',
+  DoNotRecommend = 'Do Not Recommend',
+  Delicious = 'Delicious'
+}
+
+
+const restaurantList = ref<Restaurant[]>([])
+const newRestaurant = ref<Restaurant>({})
+const newRestaurantName = ref('')
+function addRestaurant() {
+  restaurantList.value.push({
+    name: newRestaurantName.value,
+    address: '',
+    status: '',
+    dishes: []
+  })
+}
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+  <main>
+  <pre>
+  {{ newRestaurant }}
+  </pre>
+    <form @submit.prevent="addRestaurant">
+      <div>
+        <label for="restaurant-name">Restaurant Name</label>
+        <input id="restaurant-name" v-model="newRestaurant.name" type="text"/>
+      </div>
+      <div>
+        <label for="restaurant-address">Restaurant address</label>
+        <input id="restaurant-address" v-model="newRestaurant.address" type="text"/>
+      </div>
+      <div class="select">
+        <select v-model="newRestaurant.status" id="status">
+          <option v-for="status in Object.values(Status)" :value="status" :key="`option-${status}`">
+            {{ status }}
+          </option>
+        </select>
+      </div>
+      <button type="submit">Add Restaurant</button>
+    </form>
 
-  <RouterView/>
+  </main>
 </template>
 
 <style scoped>
@@ -44,12 +85,6 @@ nav a:first-of-type {
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
   }
 
   nav {
